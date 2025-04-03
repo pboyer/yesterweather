@@ -1,0 +1,44 @@
+{
+  "name": "yesterdays-weather",
+  "version": "1.0.0",
+  "description": "Weather data collection service using NOAA API and Supabase",
+  "main": "src/weatherCollector.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/weatherCollector.ts",
+    "dev": "ts-node-dev --respawn src/weatherCollector.ts",
+    "debug": "node --require ts-node/register --inspect src/weatherCollector.ts",
+    "test-collect": "ts-node src/testWeatherCollection.ts",
+    "setup-db": "ts-node src/setup-database.ts",
+    "populate-cities": "ts-node src/populate-cities-database.ts",
+    "seed-weather": "ts-node src/seed-weather-data.ts",
+    "update-cities-table": "echo 'Run src/update-cities-table.sql in your Supabase SQL editor'",
+    "update-cities-zips": "echo 'Run src/update-cities-with-zips.sql in your Supabase SQL editor'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "populate-weather": "ts-node src/populate-weather-database.ts",
+    "check-zip-codes": "ts-node src/check-zip-codes.ts"
+  },
+  "keywords": [
+    "weather",
+    "noaa",
+    "supabase",
+    "cron",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "axios": "^1.6.2",
+    "csv-parse": "^5.5.3",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}
