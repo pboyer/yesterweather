@@ -58,12 +58,8 @@ export default async function CityPage(props: PageParams) {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2">
-        {cityWeather.city}, {cityWeather.state} Weather History
+        {cityWeather.city}, {cityWeather.state} Weather
       </h1>
-
-      <p className="text-gray-600 dark:text-gray-400 mb-8">
-        Historical weather data from {cityWeather.stationName}
-      </p>
 
       <WeatherDetail weatherData={cityWeather} />
     </div>

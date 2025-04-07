@@ -135,7 +135,20 @@ export async function getAllCitiesWeather(): Promise<CityWeatherData[]> {
     const cities = await getCities();
 
     // Then get the weather data for each city
-    const promises = cities.map((city) => getCityWeather(city.display_name));
+    const promises = cities.map(async (city) => {
+      const weatherData = await getCityWeather(city.display_name);
+      if (!weatherData) return null;
+
+      // Ensure we have the correct city data
+      return {
+        ...weatherData,
+        city: city.name,
+        state: city.state,
+        fullName: city.display_name,
+        slug: city.slug,
+      };
+    });
+
     const results = await Promise.all(promises);
 
     // Filter out any nulls (cities for which we couldn't get data)

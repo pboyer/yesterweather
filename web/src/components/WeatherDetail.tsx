@@ -11,6 +11,11 @@ interface WeatherDetailProps {
 }
 
 export default function WeatherDetail({ weatherData }: WeatherDetailProps) {
+  // Sort dailyData in reverse chronological order
+  const sortedDailyData = [...weatherData.dailyData].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   return (
     <div>
       <div className="mb-10">
@@ -19,7 +24,7 @@ export default function WeatherDetail({ weatherData }: WeatherDetailProps) {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
             <h3 className="text-lg font-medium mb-4">Daily Weather</h3>
             <div className="space-y-4">
-              {weatherData.dailyData.map((day) => (
+              {sortedDailyData.map((day) => (
                 <div
                   key={day.date}
                   className="border-b border-gray-200 dark:border-gray-700 pb-3"
@@ -54,12 +59,10 @@ export default function WeatherDetail({ weatherData }: WeatherDetailProps) {
               About {weatherData.city}
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              {weatherData.city} is located in {weatherData.state}. This
-              historical weather data is collected from the NOAA Climate Data
-              Online (CDO) API through the nearest weather station to the city.
+              {weatherData.city} is located in {weatherData.state}.
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              The data shows weather patterns from{" "}
+              Data shows weather patterns from{" "}
               {formatDate(weatherData.dateRange.start)} to{" "}
               {formatDate(weatherData.dateRange.end)}, including daily
               temperature, precipitation, and snow measurements.

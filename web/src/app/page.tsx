@@ -19,14 +19,7 @@ export default async function Home() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">Yesterday&apos;s Weather</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-4">
-        Historical weather data for cities across the United States
-      </p>
-
-      <div className="mb-8">
-        <CitySearch cities={cities} />
-      </div>
+      <CitySearch cities={cities} />
 
       {citiesWeather.length === 0 ? (
         <div className="text-center py-12">
@@ -38,7 +31,7 @@ export default async function Home() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {citiesWeather.map((cityWeather) => (
             <WeatherCard key={cityWeather.fullName} weatherData={cityWeather} />
           ))}

@@ -11,60 +11,46 @@ interface WeatherCardProps {
 }
 
 export default function WeatherCard({ weatherData }: WeatherCardProps) {
-  // Get the most recent data point
-  const latestData =
-    weatherData.dailyData.length > 0
-      ? weatherData.dailyData[weatherData.dailyData.length - 1]
-      : null;
+  const latestData = weatherData.dailyData[0];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <Link href={`/city/${weatherData.slug}`} className="block">
-        <div className="p-5">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-            {weatherData.city}, {weatherData.state}
-          </h2>
-
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-            Station: {weatherData.stationName}
-          </p>
-
-          {latestData ? (
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatShortDate(latestData.date)}
-                </span>
-
-                <div className="text-right">
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                    {formatTemperature(latestData.temperature)}
-                  </div>
-
-                  <div className="text-sm text-gray-600 dark:text-gray-300">
-                    Precip: {formatPrecipitation(latestData.precipitation)}
-                  </div>
-                </div>
-              </div>
-
-              {latestData.snow !== null && latestData.snow > 0 && (
-                <div className="text-sm">
-                  <span className="font-medium">Snow:</span> {latestData.snow}{" "}
-                  in
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              No recent data available
-            </div>
-          )}
-
-          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-            Last updated: {weatherData.lastUpdated}
+    <Link
+      href={`/city/${weatherData.slug}`}
+      className="block bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow duration-200"
+    >
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-xl font-semibold">
+              {weatherData.city}, {weatherData.state}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              {formatShortDate(latestData.date)}
+            </p>
+          </div>
+          <div className="text-2xl font-bold">
+            {formatTemperature(latestData.temperature)}
           </div>
         </div>
-      </Link>
-    </div>
+
+        <div className="space-y-2">
+          {latestData.precipitation !== null &&
+            latestData.precipitation > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Precipitation
+                </span>
+                <span>{formatPrecipitation(latestData.precipitation)}</span>
+              </div>
+            )}
+          {latestData.snow !== null && latestData.snow > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600 dark:text-gray-400">Snow</span>
+              <span>{latestData.snow} in</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </Link>
   );
 }

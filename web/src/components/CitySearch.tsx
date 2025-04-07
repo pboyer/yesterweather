@@ -69,7 +69,7 @@ export default function CitySearch({ cities }: CitySearchProps) {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-md">
+    <div ref={searchRef} className="relative w-full">
       <div className="relative">
         <input
           type="text"

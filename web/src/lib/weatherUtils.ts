@@ -40,7 +40,7 @@ export function processWeatherData(data: WeatherData): CityWeatherData {
 
   // Process data for each day
   const dailyData: ProcessedWeatherData[] = Object.keys(resultsByDate)
-    .sort()
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
     .map((date) => {
       const dayResults = resultsByDate[date];
 

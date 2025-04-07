@@ -140,11 +140,9 @@ interface BatchFetchOptions {
   logger?: Logger;
 }
 
-// Get yesterday's date and format it as YYYY-MM-DD
-const getYesterdayDate = (): string => {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return yesterday.toISOString().split("T")[0];
+// Get today's date and format it as YYYY-MM-DD
+const getTodayDate = (): string => {
+  return new Date().toISOString().split("T")[0];
 };
 
 // Get a date 7 days ago and format it as YYYY-MM-DD
@@ -280,7 +278,7 @@ async function fetchHistoricalWeatherData(
 
       logger.log(`Fetching historical weather data for ${location.name}...`);
 
-      // First, we need to find a weather station near this location
+      // First, we need to find weather stations near this location
       const stationResponse = await axios.get(
         `https://www.ncdc.noaa.gov/cdo-web/api/v2/stations`,
         {
@@ -288,7 +286,7 @@ async function fetchHistoricalWeatherData(
             token: noaaToken,
           },
           params: {
-            limit: 5,
+            limit: 10, // Increased limit to get more stations
             sortfield: "name",
             sortorder: "asc",
             datasetid: "GHCND", // Daily Summaries
@@ -307,46 +305,69 @@ async function fetchHistoricalWeatherData(
         return null;
       }
 
-      const station = stationResponse.data.results[0];
-      logger.log(
-        `Found station near ${location.name}: ${station.name} (${station.id})`
-      );
-
       // Define date range for historical data (default to last 7 days)
-      const endDate = getYesterdayDate();
+      const endDate = getTodayDate();
       const startDate = getWeekAgoDate();
 
-      // Now fetch the actual weather data for this station
-      const dataResponse = await axios.get(
-        `https://www.ncdc.noaa.gov/cdo-web/api/v2/data`,
-        {
-          headers: {
-            token: noaaToken,
-          },
-          params: {
-            datasetid: "GHCND", // Daily Summaries
-            stationid: station.id,
-            startdate: startDate,
-            enddate: endDate,
-            limit: 1000,
-            units: "standard",
-          },
-        }
-      );
+      // Try each station until we find one with data
+      for (const station of stationResponse.data.results) {
+        logger.log(
+          `Trying station near ${location.name}: ${station.name} (${station.id})`
+        );
 
-      return {
-        location_name: location.name,
-        latitude: location.lat,
-        longitude: location.lon,
-        historical_data: dataResponse.data,
-        collected_at: new Date().toISOString(),
-        date_range: {
-          start: startDate,
-          end: endDate,
-        },
-        station_id: station.id,
-        station_name: station.name,
-      };
+        try {
+          // Fetch the actual weather data for this station
+          const dataResponse = await axios.get(
+            `https://www.ncdc.noaa.gov/cdo-web/api/v2/data`,
+            {
+              headers: {
+                token: noaaToken,
+              },
+              params: {
+                datasetid: "GHCND", // Daily Summaries
+                stationid: station.id,
+                startdate: startDate,
+                enddate: endDate,
+                limit: 1000,
+                units: "standard",
+              },
+            }
+          );
+
+          // Check if we got any data
+          if (
+            dataResponse.data.results &&
+            dataResponse.data.results.length > 0
+          ) {
+            logger.log(
+              `Found data for ${location.name} at station ${station.name}`
+            );
+            return {
+              location_name: location.name,
+              latitude: location.lat,
+              longitude: location.lon,
+              historical_data: dataResponse.data,
+              collected_at: new Date().toISOString(),
+              date_range: {
+                start: startDate,
+                end: endDate,
+              },
+              station_id: station.id,
+              station_name: station.name,
+            };
+          }
+        } catch (error) {
+          // If this station fails, try the next one
+          logger.log(`Station ${station.name} failed, trying next station...`);
+          continue;
+        }
+      }
+
+      // If we get here, no station had data
+      logger.error(
+        `No weather data found for ${location.name} at any nearby station`
+      );
+      return null;
     } catch (error: any) {
       lastError = error;
       logger.error(
@@ -485,7 +506,7 @@ export async function batchFetchWeatherData(
   const locations = citiesToProcess.map(cityToLocation);
 
   // Date range for all cities
-  const endDate = getYesterdayDate();
+  const endDate = getTodayDate();
   const startDate = getWeekAgoDate();
 
   // Process cities in parallel with controlled concurrency using our custom function
