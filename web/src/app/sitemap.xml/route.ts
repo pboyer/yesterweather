@@ -17,13 +17,13 @@ export async function GET(): Promise<Response> {
     // Generate the base sitemap with static routes
     const baseEntries: SitemapEntry[] = [
       {
-        url: "https://yesterdays-weather.vercel.app",
+        url: "https://yesterweather.vercel.app",
         lastModified: new Date(),
         changeFrequency: "daily",
         priority: 1.0,
       },
       {
-        url: "https://yesterdays-weather.vercel.app/about",
+        url: "https://yesterweather.vercel.app/about",
         lastModified: new Date(),
         changeFrequency: "monthly",
         priority: 0.8,
@@ -37,7 +37,7 @@ export async function GET(): Promise<Response> {
       try {
         const cities = await getCities();
         cityEntries = cities.map((city: CityData) => ({
-          url: `https://yesterdays-weather.vercel.app/city/${city.slug}`,
+          url: `https://yesterweather.vercel.app/city/${city.slug}`,
           lastModified: new Date(),
           changeFrequency: "daily",
           priority: 0.9,
@@ -79,7 +79,7 @@ ${entries
     const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://yesterdays-weather.vercel.app</loc>
+    <loc>https://yesterweather.vercel.app</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

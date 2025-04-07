@@ -16,7 +16,11 @@
     "update-cities-zips": "echo 'Run src/update-cities-with-zips.sql in your Supabase SQL editor'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "populate-weather": "ts-node src/populate-weather-database.ts",
-    "check-zip-codes": "ts-node src/check-zip-codes.ts"
+    "check-zip-codes": "ts-node src/check-zip-codes.ts",
+    "batch-weather": "ts-node src/batch-weather-fetcher.ts",
+    "batch-weather:fast": "ts-node src/batch-weather-fetcher.ts --concurrency=5",
+    "batch-weather:turbo": "ts-node src/batch-weather-fetcher.ts --concurrency=10",
+    "cron-weather-update": "ts-node src/cron-weather-update.ts"
   },
   "keywords": [
     "weather",
